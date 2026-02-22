@@ -16,7 +16,6 @@ export async function getPosts(): Promise<Post[]> {
   });
 
   return response.results.map((page: any) => {
-    console.log(page);
     const props = page.properties;
 
     return {

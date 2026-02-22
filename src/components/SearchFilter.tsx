@@ -31,13 +31,13 @@ export default function SearchFilter({
         <div className="relative flex-1">
           <Search
             size={15}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-text/40"
           />
           <input
             type="text"
             placeholder="검색어를 입력하세요"
             onChange={(e) => onSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="w-full pl-9 pr-4 py-2 text-sm rounded-full border border-border bg-surface text-text placeholder:text-text/40 focus:outline-none focus:ring-2 focus:ring-accent/30"
           />
         </div>
         <button
@@ -45,8 +45,8 @@ export default function SearchFilter({
           aria-label="필터"
           className={`p-2 rounded-lg transition-colors ${
             showFilter || selectedTags.length > 0
-              ? 'bg-primary text-white'
-              : 'text-primary hover:bg-secondary dark:text-secondary dark:hover:bg-primary/30'
+              ? 'bg-accent text-bg'
+              : 'text-text hover:bg-accent/10'
           }`}
         >
           <SlidersHorizontal size={18} />
@@ -61,8 +61,8 @@ export default function SearchFilter({
               onClick={() => toggleTag(tag)}
               className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                 selectedTags.includes(tag)
-                  ? 'bg-primary text-white border-primary'
-                  : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-primary dark:hover:border-secondary'
+                  ? 'bg-accent text-bg border-accent'
+                  : 'border-border text-text/70 hover:border-accent'
               }`}
             >
               {tag}
