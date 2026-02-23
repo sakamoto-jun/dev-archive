@@ -48,7 +48,7 @@ export default function PostPage({ params }: Props) {
     : '';
 
   return (
-    <main className="max-w-2xl mx-auto px-6 py-10">
+    <main className="max-w-3xl mx-auto px-6 py-10">
       {post.tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">
           {post.tags.map((tag) => (
@@ -62,13 +62,9 @@ export default function PostPage({ params }: Props) {
         </div>
       )}
 
-      <h1 className="text-3xl font-bold text-text mb-2">
-        {post.title}
-      </h1>
+      <h1 className="text-3xl font-bold text-text mb-2">{post.title}</h1>
       {post.subtitle && (
-        <p className="text-lg font-light text-text/70 mb-4">
-          {post.subtitle}
-        </p>
+        <p className="text-lg font-light text-text/70 mb-4">{post.subtitle}</p>
       )}
       <div className="flex items-center gap-2 text-sm text-text/50 mb-10 pb-6 border-b border-border">
         <span>Sakamoto</span>
@@ -76,7 +72,7 @@ export default function PostPage({ params }: Props) {
         <time>{formattedDate}</time>
       </div>
 
-      <article className="prose max-w-none font-light">
+      <article className="prose max-w-none">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           rehypePlugins={[rehypeHighlight]}

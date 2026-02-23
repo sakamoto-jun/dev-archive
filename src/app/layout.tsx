@@ -1,7 +1,22 @@
 import type { Metadata } from 'next';
+import { JetBrains_Mono, Noto_Sans_KR } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
 import Providers from '@/components/Providers';
+
+const notoSansKR = Noto_Sans_KR({
+  weight: ['300', '400', '700'],
+  subsets: ['latin'],
+  variable: '--font-noto-sans-kr',
+  fallback: ['-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  weight: ['400'],
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  fallback: ['monospace'],
+});
 
 export const metadata: Metadata = {
   title: 'Archive.Sakamoto',
@@ -25,11 +40,13 @@ export default function RootLayout({
   `;
 
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="ko" suppressHydrationWarning className={jetBrainsMono.variable}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="min-h-screen bg-bg text-text antialiased">
+      <body
+        className={`${notoSansKR.className} min-h-screen bg-bg text-text antialiased`}
+      >
         <Providers>
           <Header />
           {children}
