@@ -19,8 +19,26 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Archive.Sakamoto',
-  description: '개인 블로그',
+  title: 'Archive.sakamoto',
+  description:
+    '프론트엔드 개발자 sakamoto의 개발 아카이브, 배운 것들을 기록합니다.',
+  openGraph: {
+    title: 'Archive.sakamoto',
+    description:
+      '프론트엔드 개발자 sakamoto의 개발 아카이브, 배운 것들을 기록합니다.',
+    url: 'https://archive-sakamoto.vercel.app',
+    siteName: 'Archive.sakamoto',
+    images: [{ url: '/og-default.png', width: 1200, height: 630 }],
+    locale: 'ko_KR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Archive.sakamoto',
+    description:
+      '프론트엔드 개발자 sakamoto의 개발 아카이브, 배운 것들을 기록합니다.',
+    images: ['/og-default.png'],
+  },
 };
 
 export default function RootLayout({

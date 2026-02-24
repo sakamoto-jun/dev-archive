@@ -1,43 +1,46 @@
-'use client';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { getPosts, getPostDetail } from '@/lib/notion';
+import PostContent from '@/components/PostContent';
 
-import { use } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
-import CodeBlock from '@/components/CodeBlock';
-import { PostDetail } from '@/types/post';
+// Post 정적 생성
+export async function generateStaticParams() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ id: post.id }));
+}
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
-export default function PostPage({ params }: Props) {
-  const { id } = use(params);
+// Post 디테일 Metadata 생성
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const post = await getPostDetail(id).catch(() => null);
+  if (!post) return {};
 
-  const { data: post, isLoading } = useQuery<PostDetail>({
-    queryKey: ['post', id],
-    queryFn: () => fetch(`/api/posts/${id}`).then((r) => r.json()),
-  });
+  return {
+    title: `${post.title} | Archive.sakamoto`,
+    description: post.subtitle || post.title,
+    openGraph: {
+      title: `${post.title} | Archive.sakamoto`,
+      description: post.subtitle || post.title,
+      images: [{ url: '/og-default.png', width: 1200, height: 630 }],
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${post.title} | Archive.sakamoto`,
+      description: post.subtitle || post.title,
+      images: ['/og-default.png'],
+    },
+  };
+}
 
-  if (isLoading) {
-    return (
-      <main className="max-w-2xl mx-auto px-6 py-10 animate-pulse">
-        <div className="flex gap-2 mb-4">
-          <div className="h-5 w-12 rounded-full bg-border" />
-        </div>
-        <div className="h-8 w-3/4 rounded bg-border mb-3" />
-        <div className="h-5 w-1/2 rounded bg-border mb-6" />
-        <div className="space-y-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-4 rounded bg-border" />
-          ))}
-        </div>
-      </main>
-    );
-  }
-
-  if (!post) return null;
+export default async function PostPage({ params }: Props) {
+  const { id } = await params;
+  const post = await getPostDetail(id).catch(() => null);
+  if (!post) notFound();
 
   const formattedDate = post.date
     ? new Date(post.date).toLocaleDateString('ko-KR', {
@@ -72,15 +75,7 @@ export default function PostPage({ params }: Props) {
         <time>{formattedDate}</time>
       </div>
 
-      <article className="prose max-w-none">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeHighlight]}
-          components={{ pre: CodeBlock }}
-        >
-          {post.content}
-        </ReactMarkdown>
-      </article>
+      <PostContent content={post.content} />
     </main>
   );
 }
