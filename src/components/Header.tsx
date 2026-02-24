@@ -6,11 +6,8 @@ export default function Header() {
   return (
     <header className="w-full border-b border-border bg-bg">
       <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link
-          href="/"
-          className="text-lg font-bold text-text tracking-tight"
-        >
-          Archive.Sakamoto
+        <Link href="/" className="text-lg font-bold text-text tracking-tight">
+          Archive.sakamoto
         </Link>
         <div className="flex items-center gap-2">
           <a
