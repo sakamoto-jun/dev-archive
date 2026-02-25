@@ -1,12 +1,30 @@
 import { revalidatePath } from 'next/cache';
+import crypto from 'crypto';
 
 export async function POST(req: Request) {
-  console.log(req.headers);
-  const authHeader = req.headers.get('Authorization');
-  const token = authHeader?.replace('Bearer ', '');
+  console.log(req);
 
-  if (token !== process.env.REVALIDATE_SECRET) {
-    return Response.json({ error: 'Invalid secret' }, { status: 401 });
+  const rawBody = await req.text();
+  const notionSignature = req.headers.get('X-Notion-Signature');
+
+  if (!notionSignature) {
+    return Response.json({ error: 'Missing signature' }, { status: 401 });
+  }
+
+  const hmac = crypto
+    .createHmac('sha256', process.env.REVALIDATE_SECRET!)
+    .update(rawBody)
+    .digest('hex');
+
+  const calculatedSignature = `sha256=${hmac}`;
+
+  const isTrustedPayload = crypto.timingSafeEqual(
+    Buffer.from(calculatedSignature),
+    Buffer.from(notionSignature),
+  );
+
+  if (!isTrustedPayload) {
+    return Response.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
   revalidatePath('/');
