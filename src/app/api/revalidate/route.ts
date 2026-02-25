@@ -1,12 +1,14 @@
 import { revalidatePath } from 'next/cache';
 
-// Notion API -> Next 서버 흐름
-
-export async function GET() {
-  return Response.json({ ok: true });
-}
-
 export async function POST(req: Request) {
+  const body = await req.json();
+
+  // Notion 엔드포인트 인증 요청
+  if (body.verification_token) {
+    return Response.json({ verification_token: body.verification_token });
+  }
+
+  // 일반 웹훅 이벤트 — Authorization 검증
   const authHeader = req.headers.get('Authorization');
   const token = authHeader?.replace('Bearer ', '');
 
