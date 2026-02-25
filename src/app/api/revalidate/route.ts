@@ -2,8 +2,6 @@ import { revalidatePath } from 'next/cache';
 import crypto from 'crypto';
 
 export async function POST(req: Request) {
-  console.log(req);
-
   const rawBody = await req.text();
   const notionSignature = req.headers.get('X-Notion-Signature');
 
