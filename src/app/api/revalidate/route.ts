@@ -1,5 +1,11 @@
 import { revalidatePath } from 'next/cache';
 
+// Notion API -> Next 서버 흐름
+
+export async function GET() {
+  return Response.json({ ok: true });
+}
+
 export async function POST(req: Request) {
   const { secret } = await req.json();
 
