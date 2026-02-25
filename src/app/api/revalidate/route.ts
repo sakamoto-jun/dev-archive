@@ -5,7 +5,8 @@ export async function POST(req: Request) {
 
   // Notion 엔드포인트 인증 요청
   if (body.verification_token) {
-    return Response.json({ verification_token: body.verification_token });
+    console.log('[Notion Webhook] verification_token:', body.verification_token);
+    return Response.json({ ok: true });
   }
 
   // 일반 웹훅 이벤트 — Authorization 검증
