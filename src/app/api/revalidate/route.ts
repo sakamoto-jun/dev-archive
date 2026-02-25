@@ -7,9 +7,10 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { secret } = await req.json();
+  const authHeader = req.headers.get('Authorization');
+  const token = authHeader?.replace('Bearer ', '');
 
-  if (secret !== process.env.REVALIDATE_SECRET) {
+  if (token !== process.env.REVALIDATE_SECRET) {
     return Response.json({ error: 'Invalid secret' }, { status: 401 });
   }
 
