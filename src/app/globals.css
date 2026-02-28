@@ -48,8 +48,15 @@
 }
 
 .prose :not(pre)>code::before,
-.prose :not(pre)>code::after {
+.prose :not(pre)>code::after,
+.prose blockquote p:first-of-type::before,
+.prose blockquote p:last-of-type::after {
   content: '';
+}
+
+.prose {
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .prose :not(pre)>code {
