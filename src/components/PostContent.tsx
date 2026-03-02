@@ -1,24 +1,26 @@
-'use client';
-
-import ReactMarkdown from 'react-markdown';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
-import CodeBlock from '@/components/CodeBlock';
+import remarkRehype from 'remark-rehype';
+import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeStringify from 'rehype-stringify';
+import HtmlContent from '@/components/HtmlContent';
 
 interface Props {
   content: string;
 }
 
-export default function PostContent({ content }: Props) {
-  return (
-    <article className="prose max-w-none">
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeHighlight]}
-        components={{ pre: CodeBlock }}
-      >
-        {content}
-      </ReactMarkdown>
-    </article>
-  );
+export default async function PostContent({ content }: Props) {
+  const markup = await unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkRehype)
+    .use(rehypePrettyCode, {
+      theme: { light: 'github-light', dark: 'github-dark-dimmed' },
+      keepBackground: false,
+    })
+    .use(rehypeStringify)
+    .process(content);
+
+  return <HtmlContent html={String(markup)} />;
 }
