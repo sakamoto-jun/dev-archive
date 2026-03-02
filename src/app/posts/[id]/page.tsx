@@ -67,7 +67,7 @@ export default async function PostPage({ params }: Props) {
 
       <h1 className="text-3xl font-bold text-text mb-2">{post.title}</h1>
       {post.subtitle && (
-        <p className="text-lg font-light text-text/70 mb-4">{post.subtitle}</p>
+        <p className="text-lg text-text/70 mb-4">{post.subtitle}</p>
       )}
       <div className="flex items-center gap-2 text-sm text-text/50 mb-10 pb-6 border-b border-border">
         <span>Sakamoto</span>

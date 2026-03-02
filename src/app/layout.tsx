@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import Providers from '@/components/Providers';
 
 const notoSansKR = Noto_Sans_KR({
-  weight: ['300', '400', '700'],
+  weight: ['400', '700'],
   subsets: ['latin'],
   variable: '--font-noto-sans-kr',
   fallback: ['-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],

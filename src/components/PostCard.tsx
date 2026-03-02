@@ -29,17 +29,11 @@ export default function PostCard({ post }: Props) {
             ))}
           </div>
         )}
-        <h2 className="text-lg font-bold text-text mb-1">
-          {post.title}
-        </h2>
+        <h2 className="text-lg font-bold text-text mb-1">{post.title}</h2>
         {post.subtitle && (
-          <p className="text-sm font-light text-text/70 mb-3">
-            {post.subtitle}
-          </p>
+          <p className="text-sm text-text/70 mb-3">{post.subtitle}</p>
         )}
-        <time className="text-xs text-text/50">
-          {formattedDate}
-        </time>
+        <time className="text-xs text-text/50">{formattedDate}</time>
       </article>
     </Link>
   );

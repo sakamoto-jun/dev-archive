@@ -68,3 +68,7 @@
   font-size: 0.875em;
   color: var(--color-accent);
 }
+
+.prose :where(blockquote):not(:where([class~=not-prose], [class~=not-prose] *)) {
+  font-style: unset;
+}
