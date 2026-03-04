@@ -105,7 +105,30 @@ Next.js App Router의 서버 컴포넌트 구조로 전환했다.
 
 ---
 
-### 4. 포스트 상세 페이지 SEO (generateStaticParams)
+### 4. Notion 빈 블록 렌더링 누락
+
+**문제**
+Notion에서 문단 사이 구분감을 위한 띄움(빈 블록)을 넣어도 블로그에서는 간격이 생기지 않았다.
+notion-to-md가 `rich_text` 배열이 비어있는 paragraph 블록을 빈 문자열로 변환하고, 이후 마크다운 파이프라인에서 의미없는 공백으로 처리되어 렌더에서 사라졌기 때문이다.
+
+**해결**
+`setCustomTransformer`로 paragraph 블록 변환을 가로채서, `rich_text`가 비어있으면 `&nbsp;`를 반환하도록 처리했다.
+`rehype-raw`가 파이프라인에 포함되어 있어 HTML 엔티티가 그대로 렌더링되면서 빈 블록이 의도한 여백으로 표시된다.
+
+```ts
+// lib/notion.ts
+n2m.setCustomTransformer('paragraph', async (block) => {
+  const { paragraph } = block;
+  if (!paragraph.rich_text.length) {
+    return '\n&nbsp;\n';
+  }
+  return false; // 기본 변환 사용
+});
+```
+
+---
+
+### 5. 포스트 상세 페이지 SEO (generateStaticParams)
 
 **문제**  
 동적 라우트(`/posts/[id]`)는 기본적으로 요청 시 서버 렌더링되어 초기 응답이 느리고, 검색엔진이 각 페이지를 제대로 수집하지 못할 수 있었다.
@@ -120,4 +143,44 @@ export async function generateStaticParams() {
   const posts = await getPosts();
   return posts.map((post) => ({ id: post.id }));
 }
+```
+
+---
+
+## 업데이트
+
+### Notion Callout 커스텀 렌더링
+
+기존에 notion-to-md는 callout 블록을 `> blockquote` 마크다운으로 변환했다.
+이 경우 이모지 아이콘, 배경색 등 Notion callout의 시각적 특성이 전혀 반영되지 않아 일반 인용문과 구분이 불가능했다.
+
+`setCustomTransformer`로 callout 블록 변환을 직접 가로채서 커스텀 HTML로 출력하도록 교체했다.
+callout의 `icon.emoji`와 `color` 속성을 읽어 CSS 클래스를 부여하고, `rich_text` 배열은 별도 유틸(`richTextToHtml`)로 인라인 서식(볼드, 이탤릭, 코드, 링크 등)까지 보존해서 HTML로 변환하였다.
+파이프라인에 `rehype-raw`가 포함되어 있어서 raw HTML이 그대로 DOM에 반영된다.
+
+```ts
+// lib/notion.ts
+n2m.setCustomTransformer('callout', async (block) => {
+  const { callout } = block;
+  const icon = callout.icon?.emoji ?? '';
+  const color: string = callout.color ?? 'default';
+  const colorClass = color.includes('yellow')
+    ? 'callout-yellow'
+    : 'callout-blue';
+  const text = richTextToHtml(callout.rich_text ?? []);
+
+  return `\n<div class="callout ${colorClass}"><span class="callout-icon">${icon}</span><div class="callout-body">${text}</div></div>\n`;
+});
+```
+
+```ts
+// PostContent.tsx — rehype-raw로 raw HTML 파싱 활성화
+const markup = await unified()
+  .use(remarkParse)
+  .use(remarkGfm)
+  .use(remarkRehype, { allowDangerousHtml: true })
+  .use(rehypeRaw)
+  .use(rehypePrettyCode, { ... })
+  .use(rehypeStringify)
+  .process(content);
 ```
